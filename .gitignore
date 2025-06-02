@@ -1,0 +1,26 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Environments
+.env
+*.env
+*.env.*
+
+# Docker
+*.pid
+*.log
+data/
+postgres_data/
+
+# Python virtual env
+venv/
+
+# VSCode/IDE
+.vscode/
+.idea/
+
+# Others
+*.sqlite3
+
