@@ -7,7 +7,10 @@ from resources.db import SessionLocal
 from pydantic import BaseModel, Field
 from resources.routers import auth
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/todos",
+    tags=["todos"],
+)
 
 
 def get_db():
@@ -44,7 +47,7 @@ async def read_all(db: db_dependency):
     return db.query(Todos).all()
 
 
-@router.get("/todos/{todo_id}", status_code=status.HTTP_200_OK)
+@router.get("/{todo_id}", status_code=status.HTTP_200_OK)
 async def read_todo(db: db_dependency, todo_id: int = Path(gt=0)):
     todo = db.query(Todos).filter(Todos.id == todo_id).first()
     if todo:
@@ -52,7 +55,7 @@ async def read_todo(db: db_dependency, todo_id: int = Path(gt=0)):
     raise HTTPException(status_code=404, detail="Todo not found")
 
 
-@router.post("/todos", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_todo(todo: TodoRequest, db: db_dependency):
     new_todo = Todos(**todo.model_dump())
     db.add(new_todo)
@@ -61,7 +64,7 @@ async def create_todo(todo: TodoRequest, db: db_dependency):
     return new_todo
 
 
-@router.put("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_todo(todo: TodoRequest, db: db_dependency, todo_id: int = Path(gt=0)):
     existing_todo = db.query(Todos).filter(Todos.id == todo_id).first()
     if not existing_todo:
@@ -74,7 +77,7 @@ async def update_todo(todo: TodoRequest, db: db_dependency, todo_id: int = Path(
     return None
 
 
-@router.delete("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(db: db_dependency, todo_id: int = Path(gt=0)):
     todo = db.query(Todos).filter(Todos.id == todo_id).first()
     if not todo:
