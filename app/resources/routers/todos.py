@@ -6,6 +6,8 @@ from resources.models import Todos
 from resources.db import SessionLocal
 from pydantic import BaseModel, Field
 from resources.routers import auth
+from resources.routers.auth import get_current_user
+from resources.models import Users
 
 router = APIRouter(
     prefix="/todos",
@@ -22,6 +24,8 @@ def get_db():
 
 
 db_dependency = Annotated[Session, Depends(get_db)]
+
+user_dependency = Annotated[Users, Depends(get_current_user)]
 
 
 class TodoRequest(BaseModel):
@@ -56,8 +60,11 @@ async def read_todo(db: db_dependency, todo_id: int = Path(gt=0)):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_todo(todo: TodoRequest, db: db_dependency):
-    new_todo = Todos(**todo.model_dump())
+async def create_todo(user: user_dependency, todo: TodoRequest, db: db_dependency):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication failed")
+    print("Creating todo for user:", user)
+    new_todo = Todos(**todo.model_dump(), owner_id=user.id)
     db.add(new_todo)
     db.commit()
     db.refresh(new_todo)
