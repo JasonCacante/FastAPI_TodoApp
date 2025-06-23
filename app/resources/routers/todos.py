@@ -31,7 +31,7 @@ user_dependency = Annotated[Users, Depends(get_current_user)]
 class TodoRequest(BaseModel):
     title: str = Field(..., min_length=3, max_length=100)
     description: str | None = Field(None, max_length=500)
-    completed: bool = False
+    complete: bool = False
     priority: int = Field(1, ge=1, le=5)  # Default priority set to 1
 
     model_config = {
@@ -39,7 +39,7 @@ class TodoRequest(BaseModel):
             "example": {
                 "title": "Todo Example",
                 "description": "This is an example of a todo item.",
-                "completed": False,
+                "complete": False,
                 "priority": 1,
             }
         }
