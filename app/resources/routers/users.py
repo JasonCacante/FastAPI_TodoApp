@@ -78,3 +78,22 @@ async def change_password(
     db.commit()
     db.refresh(user_model)
     return {"detail": "Password changed successfully"}
+
+
+@router.put("/phone_number", status_code=status.HTTP_200_OK)
+async def update_phone_number(
+    user: user_dependency, db: db_dependency, phone_number: str
+):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication failed")
+
+    user_model = db.query(Users).filter(Users.id == user.id).first()
+    if not user_model:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_model.phone_number = phone_number
+    db.add(user_model)
+    db.commit()
+    db.refresh(user_model)
+
+    return {"detail": "Phone number updated successfully"}
