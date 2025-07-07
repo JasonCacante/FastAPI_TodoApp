@@ -74,7 +74,6 @@ async def read_todo(
 async def create_todo(user: user_dependency, todo: TodoRequest, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication failed")
-    print("Creating todo for user:", user)
     new_todo = Todos(**todo.model_dump(), owner_id=user.id)
     db.add(new_todo)
     db.commit()

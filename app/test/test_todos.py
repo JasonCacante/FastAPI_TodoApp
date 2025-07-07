@@ -68,3 +68,71 @@ def test_read_one_not_found(test_todo):
     assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()
     assert data["detail"] == "Todo not found"
+
+
+def test_create_todo(test_todo):
+    new_todo = {
+        "title": "New Todo",
+        "description": "This is a new todo item.",
+        "complete": False,
+        "priority": 2,
+    }
+    response = client.post("/todos/", json=new_todo)
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+    assert data["title"] == "New Todo"
+    assert data["description"] == "This is a new todo item."
+    assert data["complete"] is False
+    assert data["priority"] == 2
+    assert data["owner_id"] == 1
+
+
+def test_update_todo(test_todo):
+    updated_todo = {
+        "title": "Updated Todo",
+        "description": "This is an updated todo item.",
+        "complete": True,
+        "priority": 3,
+    }
+    response = client.put("/todos/1", json=updated_todo)
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    # Verify the update
+    response = client.get("/todos/1")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["title"] == "Updated Todo"
+    assert data["description"] == "This is an updated todo item."
+    assert data["complete"] is True
+    assert data["priority"] == 3
+
+
+def test_update_todo_not_found(test_todo):
+    updated_todo = {
+        "title": "Updated Todo",
+        "description": "This is an updated todo item.",
+        "complete": True,
+        "priority": 3,
+    }
+    response = client.put("/todos/9999", json=updated_todo)
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    data = response.json()
+    assert data["detail"] == "Todo not found"
+
+
+def test_delete_todo(test_todo):
+    response = client.delete("/todos/1")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    # Verify the deletion
+    response = client.get("/todos/1")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    data = response.json()
+    assert data["detail"] == "Todo not found"
+
+
+def test_delete_todo_not_found(test_todo):
+    response = client.delete("/todos/9999")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    data = response.json()
+    assert data["detail"] == "Todo not found"
