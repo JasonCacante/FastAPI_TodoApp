@@ -2,7 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
 from resources.db import Base
-
+from fastapi.testclient import TestClient
+from main import app
+from resources.models import Users
 
 SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"
 
@@ -19,3 +21,18 @@ TestingSessionLocal = sessionmaker(
 )
 
 Base.metadata.create_all(bind=engine)
+
+
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def override_get_current_user():
+    return Users(id=1, username="testuser", email="testuser@email.com", role="admin")
+
+
+client = TestClient(app)
