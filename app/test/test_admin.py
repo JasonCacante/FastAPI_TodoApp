@@ -26,7 +26,7 @@ def test_delete_todo_admin(test_todo):
     assert data["detail"] == "Todo not found"
 
 
-def test_delete_todo_not_found():
+def test_delete_todo_not_found(test_user):
     response = client.delete("/admin/todo/9999")
     assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()

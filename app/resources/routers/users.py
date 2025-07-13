@@ -43,18 +43,10 @@ user_dependency = Annotated[Users, Depends(get_current_user)]
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
-async def get_user(user: user_dependency):
+async def get_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication failed")
-    return {
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "phone_number": user.phone_number,
-        "role": user.role,
-    }
+    return db.query(Users).filter(Users.id == user.id).first()
 
 
 @router.put("/password", status_code=status.HTTP_200_OK)

@@ -32,7 +32,10 @@ def override_get_db():
 
 
 def override_get_current_user():
-    return Users(id=1, username="testuser", email="testuser@email.com", role="admin")
+    db = TestingSessionLocal()
+    user = db.query(Users).first()
+    db.close()
+    return user
 
 
 client = TestClient(app)
