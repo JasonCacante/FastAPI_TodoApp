@@ -4,8 +4,6 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from resources.models import Todos
 from resources.db import SessionLocal
-from pydantic import BaseModel, Field
-from resources.routers import auth
 from resources.routers.auth import get_current_user
 from resources.models import Users
 
