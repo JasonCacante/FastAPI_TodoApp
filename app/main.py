@@ -4,6 +4,7 @@ from resources.db import engine
 from resources.routers import auth, todos, admin, users
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -12,6 +13,11 @@ Base.metadata.create_all(bind=engine)  # Create database tables
 templates = Jinja2Templates(directory="templates")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse("static/favicon.ico")
 
 
 @app.get("/")
