@@ -29,7 +29,7 @@ class CreateUserRequest(BaseModel):
     username: str
     password: str
     email: str
-    firs_name: str
+    first_name: str
     last_name: str
     role: str
     phone_number: str | None = None
@@ -109,7 +109,7 @@ async def create_user(user: CreateUserRequest, db: db_dependency):
     user = Users(
         email=user.email,
         username=user.username,
-        first_name=user.firs_name,
+        first_name=user.first_name,
         last_name=user.last_name,
         role=user.role,
         phone_number=user.phone_number,
